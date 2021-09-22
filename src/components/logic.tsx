@@ -1,12 +1,12 @@
 import { Battlefield } from "customTypes/types";
 
-function validateBattlefield(field: Battlefield) {
+function validateBattlefield(field: Battlefield): boolean {
   interface Coordinates {
     y: number;
     x: number;
   }
 
-  const existingShipCoords: Coordinates[] = [];
+  const alreadyOcupiedCoords: Coordinates[] = [];
 
   const correctShips = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
 
@@ -24,29 +24,29 @@ function validateBattlefield(field: Battlefield) {
     }
   }
 
-  let unusedStartCoords = getShipStartCoordsAndAddToExisting(field);
+  let availableStartCoords = getShipStartCoordsAndAddToOccupied(field);
 
-  while (unusedStartCoords) {
-    if (hasMoreThanOneAdjustentNode(unusedStartCoords)) {
+  while (availableStartCoords) {
+    if (hasMoreThanOneAdjustentNode(availableStartCoords)) {
       return false;
     }
 
-    if (isSubmarine(unusedStartCoords)) {
+    if (isSubmarine(availableStartCoords)) {
       recordShipOfLength(1);
-      unusedStartCoords = getShipStartCoordsAndAddToExisting(field);
+      availableStartCoords = getShipStartCoordsAndAddToOccupied(field);
       continue;
     }
 
-    const shipDirection = getShipDirection(unusedStartCoords);
+    const shipDirection = getShipDirection(availableStartCoords);
 
     let shipLength = 1;
 
-    let currentNodeCoords: Coordinates = { x: 0, y: 0 };
+    let currentNodeCoords: Coordinates = { ...availableStartCoords };
 
     let nextNodeCoords = getNextNodeCoords(
       {
-        y: unusedStartCoords.y,
-        x: unusedStartCoords.x,
+        y: availableStartCoords.y,
+        x: availableStartCoords.x,
       },
       shipDirection
     );
@@ -74,14 +74,16 @@ function validateBattlefield(field: Battlefield) {
 
     recordShipOfLength(shipLength);
 
-    unusedStartCoords = getShipStartCoordsAndAddToExisting(field);
+    availableStartCoords = getShipStartCoordsAndAddToOccupied(field);
   }
 
   return containsCorrectShips(correctShips, recordedShips);
 
   ////////////////////////////////////////////////////////////////////////
 
-  function getShipStartCoordsAndAddToExisting(field: Battlefield) {
+  function getShipStartCoordsAndAddToOccupied(
+    field: Battlefield
+  ): Coordinates | null {
     for (let i = 0; i < field.length; i++) {
       const row = field[i];
 
@@ -90,7 +92,7 @@ function validateBattlefield(field: Battlefield) {
       for (let j = 0; j < row.length; j++) {
         if (
           row[j] === 1 &&
-          areFoundCoordsUnused(existingShipCoords, { y: i, x: j })
+          areFoundCoordsUnused(alreadyOcupiedCoords, { y: i, x: j })
         ) {
           const x = j;
 
@@ -106,7 +108,10 @@ function validateBattlefield(field: Battlefield) {
     return null;
   }
 
-  function containsCorrectShips(patternArr: number[], checkedArr: number[]) {
+  function containsCorrectShips(
+    patternArr: number[],
+    checkedArr: number[]
+  ): boolean {
     const sortedPatternArr = patternArr.sort();
     const sortedCheckedArr = checkedArr.sort();
 
@@ -115,14 +120,14 @@ function validateBattlefield(field: Battlefield) {
     );
   }
 
-  function markCoordsAsUsed(coords: Coordinates) {
-    existingShipCoords.push({
+  function markCoordsAsUsed(coords: Coordinates): void {
+    alreadyOcupiedCoords.push({
       y: coords.y,
       x: coords.x,
     });
   }
 
-  function isSubmarine(coords: Coordinates) {
+  function isSubmarine(coords: Coordinates): boolean {
     const { left, right, up, down } = getAdjustentNodesXandYAxes(coords);
 
     const sum = +!!left + +!!right + +!!up + +!!down;
@@ -130,7 +135,7 @@ function validateBattlefield(field: Battlefield) {
     return sum === 0;
   }
 
-  function recordShipOfLength(length: number) {
+  function recordShipOfLength(length: number): void {
     recordedShips.push(length);
   }
 
@@ -140,7 +145,10 @@ function validateBattlefield(field: Battlefield) {
     return right ? "right" : "down";
   }
 
-  function getNextNodeCoords(coords: Coordinates, direction: string) {
+  function getNextNodeCoords(
+    coords: Coordinates,
+    direction: string
+  ): Coordinates {
     switch (direction) {
       case "right": {
         return { y: coords.y, x: coords.x + 1 };
@@ -157,18 +165,17 @@ function validateBattlefield(field: Battlefield) {
   }
 
   function areFoundCoordsUnused(
-    existingShipCoords: Coordinates[],
+    alreadyOcupiedCoords: Coordinates[],
     foundCoords: Coordinates
-  ) {
+  ): boolean {
     const { y, x } = foundCoords;
 
-    return !existingShipCoords.some(
-      ({ y: existingShipStartY, x: existingShipStartX }) =>
-        existingShipStartY === y && existingShipStartX === x
+    return !alreadyOcupiedCoords.some(
+      ({ y: occupiedY, x: occupiedX }) => occupiedY === y && occupiedX === x
     );
   }
 
-  function hasMoreThanOneAdjustentNode(coords: Coordinates) {
+  function hasMoreThanOneAdjustentNode(coords: Coordinates): boolean {
     const { left, right, up, down } = getAdjustentNodesXandYAxes(coords);
 
     const sum = +!!left + +!!right + +!!up + +!!down;
@@ -176,7 +183,7 @@ function validateBattlefield(field: Battlefield) {
     return sum > 1;
   }
 
-  function hasMoreThanTwoAdjustentNodes(coords: Coordinates) {
+  function hasMoreThanTwoAdjustentNodes(coords: Coordinates): boolean {
     const { left, right, up, down } = getAdjustentNodesXandYAxes(coords);
 
     const sum = +!!left + +!!right + +!!up + +!!down;
@@ -184,26 +191,26 @@ function validateBattlefield(field: Battlefield) {
     return sum > 2;
   }
 
-  function hasAdjustentNodeZAxis(coords: Coordinates) {
-    const { y: cellY, x: cellX } = coords;
+  function hasAdjustentNodeZAxis(coords: Coordinates): boolean {
+    const { y: nodeY, x: nodeX } = coords;
 
-    if (!field[cellY][cellX]) return false;
+    if (!field[nodeY][nodeX]) return false;
 
-    const upperLeft = field[cellY - 1] ? field[cellY - 1][cellX - 1] : null;
-    const upperRight = field[cellY - 1] ? field[cellY - 1][cellX + 1] : null;
-    const lowerLeft = field[cellY + 1] ? field[cellY + 1][cellX - 1] : null;
-    const lowerRight = field[cellY + 1] ? field[cellY + 1][cellX + 1] : null;
+    const upperLeft = field[nodeY - 1]?.[nodeX - 1] ?? null;
+    const upperRight = field[nodeY - 1]?.[nodeX + 1] ?? null;
+    const lowerLeft = field[nodeY + 1]?.[nodeX - 1] ?? null;
+    const lowerRight = field[nodeY + 1]?.[nodeX + 1] ?? null;
 
     return !!upperLeft || !!upperRight || !!lowerLeft || !!lowerRight;
   }
 
   function getAdjustentNodesXandYAxes(coords: Coordinates) {
-    const { y: cellY, x: cellX } = coords;
+    const { y: nodeY, x: nodeX } = coords;
 
-    const left = field[cellY] ? field[cellY][cellX - 1] : null;
-    const right = field[cellY] ? field[cellY][cellX + 1] : null;
-    const up = field[cellY - 1] ? field[cellY - 1][cellX] : null;
-    const down = field[cellY + 1] ? field[cellY + 1][cellX] : null;
+    const left = field[nodeY]?.[nodeX - 1] ?? null;
+    const right = field[nodeY]?.[nodeX + 1] ?? null;
+    const up = field[nodeY - 1]?.[nodeX] ?? null;
+    const down = field[nodeY + 1]?.[nodeX] ?? null;
 
     return { left, right, up, down };
   }
