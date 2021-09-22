@@ -1,4 +1,6 @@
-function validateBattlefield(field: number[][]) {
+import { Battlefield } from "customTypes/types";
+
+function validateBattlefield(field: Battlefield) {
   interface Coordinates {
     y: number;
     x: number;
@@ -79,7 +81,7 @@ function validateBattlefield(field: number[][]) {
 
   ////////////////////////////////////////////////////////////////////////
 
-  function getShipStartCoordsAndAddToExisting(field: number[][]) {
+  function getShipStartCoordsAndAddToExisting(field: Battlefield) {
     for (let i = 0; i < field.length; i++) {
       const row = field[i];
 

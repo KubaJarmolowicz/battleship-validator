@@ -1,4 +1,6 @@
-export const validField: number[][] = [
+import { Battlefield } from "customTypes/types";
+
+export const validField: Battlefield = [
   [1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
   [1, 0, 1, 0, 0, 0, 0, 0, 1, 0],
   [1, 0, 1, 0, 1, 1, 1, 0, 1, 0],
