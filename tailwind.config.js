@@ -25,6 +25,19 @@ module.exports = {
     extend: {
       gridTemplateColumns: {
         "2/1": "2.5fr 1fr",
+        battlefield: "12px repeat(10, 1fr)",
+      },
+
+      gridTemplateRows: {
+        battlefield: "12px repeat(10, 1fr)",
+      },
+
+      maxWidth: {
+        battlefield: "835px",
+      },
+
+      maxHeight: {
+        battlefield: "791px",
       },
     },
   },
