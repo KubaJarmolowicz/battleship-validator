@@ -12,7 +12,9 @@ const Battlefield = () => {
           return <div>{columnNames[index - 1]}</div>;
         }
         return index % 11 ? (
-          <button className="border bg-blue"></button>
+          <button className="border bg-blue text-white">{`[${
+            (index - (index % 11)) / 11 - 1
+          }, ${(index % 11) - 1}]`}</button>
         ) : (
           <div>{index / 11}</div>
         );
