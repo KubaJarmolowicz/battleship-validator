@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .text-stroke-sm {
+    text-stroke-width: 1.5px;
+    -webkit-text-stroke: 1.5px;
+  }
+
+  .text-stroke-blue {
+    text-stroke-color: #29339b;
+    -webkit-text-stroke-color: #29339b;
+  }
+
+  .text-shadow {
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  }
+
+  .font-sm-caps {
+    font-variant: small-caps;
+  }
+}

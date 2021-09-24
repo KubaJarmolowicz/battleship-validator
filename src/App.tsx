@@ -5,6 +5,7 @@ import StyledTitle from "components/StyledTitle";
 import MainWrapper from "components/MainWrapper";
 import BattlefieldWrapper from "components/BattlefieldWrapper";
 import UserConsoleWrapper from "components/UserConsoleWrapper";
+import { ReactComponent as BattleshipIcon } from "assets/shipIcons/Battleship.svg";
 
 function App() {
   const isBattlefieldValid = useMemo(() => validateBattlefield(validField), []);
@@ -12,10 +13,11 @@ function App() {
   return (
     <MainWrapper>
       <BattlefieldWrapper>
-        {isBattlefieldValid ? <span>works</span> : null}
+        <StyledTitle text="Place your ships on the battlefield" />
       </BattlefieldWrapper>
       <UserConsoleWrapper>
-        <StyledTitle />
+        <StyledTitle text="Choose a ship" />
+        <BattleshipIcon />
       </UserConsoleWrapper>
     </MainWrapper>
   );

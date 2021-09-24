@@ -24,7 +24,7 @@ module.exports = {
     },
     extend: {
       gridTemplateColumns: {
-        "2/1": "2fr 1fr",
+        "2/1": "2.5fr 1fr",
       },
     },
   },

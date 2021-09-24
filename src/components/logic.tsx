@@ -1,4 +1,4 @@
-import { Battlefield } from "customTypes/types";
+import { Battlefield } from "types";
 
 function validateBattlefield(field: Battlefield): boolean {
   interface Coordinates {
