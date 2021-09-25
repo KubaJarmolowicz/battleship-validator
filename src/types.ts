@@ -4,3 +4,7 @@ export interface Props {
   children?: React.ReactNode;
   text?: string;
 }
+
+export interface GameCellProps {
+  yAndXOnBattlefield: number[];
+}
